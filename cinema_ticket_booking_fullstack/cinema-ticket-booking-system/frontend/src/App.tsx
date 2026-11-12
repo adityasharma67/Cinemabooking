@@ -307,6 +307,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-1',
     title: 'Dune: Part Two',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/5/52/Dune_Part_Two_poster.jpeg',
     tagline: 'Long live the fighters.',
     description:
       'Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the universe, he endeavors to prevent a terrible future only he can foresee.',
@@ -336,6 +337,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-2',
     title: 'Kalki 2898 AD',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/4/4c/Kalki_2898_AD.jpg',
     tagline: 'The future unfolds.',
     description:
       'Set in a post-apocalyptic world in the year 2898 AD, a modern-day avatar of Vishnu descends to Earth to protect the world from dark forces and rescue SUM-80 from the totalitarian Complex ruled by Supreme Yaskin.',
@@ -365,6 +367,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-3',
     title: 'Stree 2: Sarkate Ka Aatank',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a1/Stree_2.jpg',
     tagline: 'O Stree Rakhsha Karna!',
     description:
       'After the events of Stree, the town of Chanderi is haunted again. This time, women are mysteriously abducted by a terrifying headless entity known as Sarkata, and once again it is up to Vicky and his friends to save their town.',
@@ -394,6 +397,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-4',
     title: 'Oppenheimer',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg',
     tagline: 'The world forever changes.',
     description:
       'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II, chronicling the Manhattan Project at Los Alamos and the 1954 security clearance hearing.',
@@ -423,6 +427,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-5',
     title: 'Interstellar',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg',
     tagline: 'Mankind was born on Earth. It was never meant to die here.',
     description:
       'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans across a wormhole near Saturn.',
@@ -452,6 +457,7 @@ const DEFAULT_MOVIES: Movie[] = [
   {
     id: 'mov-6',
     title: 'Blade Runner 2049',
+    posterUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Blade_Runner_2049_poster.png',
     tagline: 'The key to the future is finally unearthed.',
     description:
       'Young Blade Runner K’s discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard, who has been missing for thirty years.',
@@ -674,6 +680,7 @@ const MoviePosterGraphic: React.FC<{
   className?: string;
   showBadges?: boolean;
 }> = ({ movie, className = 'w-full h-72', showBadges = true }) => {
+  const [imageFailed, setImageFailed] = useState(false);
   const { from, via, to, accent, motif } = movie.posterPalette;
   return (
     <div
@@ -682,11 +689,13 @@ const MoviePosterGraphic: React.FC<{
         background: `linear-gradient(145deg, ${from} 0%, ${via} 52%, ${to} 100%)`
       }}
     >
-      {movie.posterUrl ? (
+      {movie.posterUrl && !imageFailed ? (
         <img
           src={movie.posterUrl}
           alt={movie.title}
           className="w-full h-full object-cover"
+          referrerPolicy="no-referrer"
+          onError={() => setImageFailed(true)}
         />
       ) : (
         <svg
@@ -882,7 +891,7 @@ export default function App() {
     )
   );
   const [movies, setMovies] = useState<Movie[]>(() =>
-    safeLoadStorage('cineverse_db_movies_v2', DEFAULT_MOVIES)
+    safeLoadStorage('cineverse_db_movies_v3', DEFAULT_MOVIES)
   );
   const [cinemas, setCinemas] = useState<Cinema[]>(() =>
     safeLoadStorage('cineverse_db_cinemas_v2', DEFAULT_CINEMAS)
@@ -912,7 +921,7 @@ export default function App() {
     safeSaveStorage('cineverse_db_jwt_v2', jwtToken);
   }, [jwtToken]);
   useEffect(() => {
-    safeSaveStorage('cineverse_db_movies_v2', movies);
+    safeSaveStorage('cineverse_db_movies_v3', movies);
   }, [movies]);
   useEffect(() => {
     safeSaveStorage('cineverse_db_cinemas_v2', cinemas);
